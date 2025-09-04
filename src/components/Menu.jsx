@@ -4,61 +4,48 @@ import Cadastro from '../pages/Cadastro';
 import Consulta from '../pages/Consulta';
 import NotFound from '../pages/NotFound';
 
-const Menu = ({
-  homeSubtitulo,
-  cadastroTitle,
-  submitLabel,
-  successMessage,
-  duplicateMessage,
-  errorLoadingMessage,
-  invalidFormMessage,
-  consultaTitle,
-  noUsersMessage,
-  deleteSuccessMessage,
-  tooltipMessage
-}) => {
+const Menu = ({ editUser, setEditUser, ...props }) => {
   return (
-    <>
-      <Routes>
-        <Route
-          path="/"
-          element={<Home subtitulo={homeSubtitulo} />}
-        />
+    <Routes>
+      <Route path="/" element={<Home subtitulo={props.homeSubtitulo} />} />
 
-        <Route
-          path="/cadastro"
-          element={
-            <Cadastro
-              title={cadastroTitle}
-              submitLabel={submitLabel}
-              successMessage={successMessage}
-              duplicateMessage={duplicateMessage}
-              errorLoadingMessage={errorLoadingMessage}
-              invalidFormMessage={invalidFormMessage}
-            />
-          }
-        />
+      <Route
+        path="/cadastro"
+        element={
+          <Cadastro
+            title={props.cadastroTitle}
+            submitLabel={props.submitLabel}
+            successMessage={props.successMessage}
+            errorLoadingMessage={props.errorLoadingMessage}
+            invalidFormMessage={props.invalidFormMessage}
+            apiUrl={props.apiUrl}
+            editUser={editUser}
+            setEditUser={setEditUser}
+          />
+        }
+      />
 
-        <Route
-          path="/consulta"
-          element={
-            <Consulta
-              title={consultaTitle}
-              placeholder=""
-              noUsersMessage={noUsersMessage}
-              deleteSuccessMessage={deleteSuccessMessage}
-              tooltipMessage={tooltipMessage}
-            />
-          }
-        />
-        
-        <Route
-          path="*"
-          element={<NotFound mensagem="Página não encontrada" voltarPara="/" />}
-        />
-      </Routes>
-    </>
+      <Route
+        path="/consulta"
+        element={
+          <Consulta
+            title={props.consultaTitle}
+            noUsersMessage={props.noUsersMessage}
+            deleteSuccessMessage={props.deleteSuccessMessage}
+            tooltipMessage={props.tooltipMessage}
+            apiUrl={props.apiUrl}
+            setEditUser={setEditUser} // passa função para setar usuário a editar
+          />
+        }
+      />
+
+      <Route
+        path="*"
+        element={<NotFound mensagem="Página não encontrada" voltarPara="/" />}
+      />
+    </Routes>
   );
 };
 
 export default Menu;
+
