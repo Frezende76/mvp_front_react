@@ -1,6 +1,6 @@
 # FrontEnd React Cadastro de usuários
 
-Esta é uma aplicação React para cadastro, edição, consulta e exclusão de usuários. Os dados são salvos em um banco de dados SQLite através de uma API backend, e o formulário pode ser preenchido automaticamente via API externa (JSONPlaceholder).
+Esta é uma aplicação React para cadastro, edição, consulta e exclusão de usuários. Os dados são salvos em um banco de dados SQLite através de uma API backend, e o formulário pode ser preenchido automaticamente via API externa ([JSONPlaceholder](https://jsonplaceholder.typicode.com/user)).
 
 ## 🔧 Funcionalidades
 
