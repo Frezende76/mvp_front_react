@@ -1,24 +1,42 @@
 import { Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 import Home from '../pages/Home';
 import Cadastro from '../pages/Cadastro';
 import Consulta from '../pages/Consulta';
 import NotFound from '../pages/NotFound';
 
-const Menu = ({ editUser, setEditUser, ...props }) => {
+const Menu = ({
+  homeSubtitulo,
+  cadastroTitle,
+  submitLabel,
+  successMessage,
+  duplicateMessage,
+  errorLoadingMessage,
+  invalidFormMessage,
+  consultaTitle,
+  noUsersMessage,
+  deleteSuccessMessage,
+  tooltipMessage,
+  apiUrl = 'http://localhost:5000/usuarios'
+}) => {
+  // Estado para controlar usuário em edição
+  const [editUser, setEditUser] = useState(null);
+
   return (
     <Routes>
-      <Route path="/" element={<Home subtitulo={props.homeSubtitulo} />} />
+      <Route path="/" element={<Home subtitulo={homeSubtitulo} />} />
 
       <Route
         path="/cadastro"
         element={
           <Cadastro
-            title={props.cadastroTitle}
-            submitLabel={props.submitLabel}
-            successMessage={props.successMessage}
-            errorLoadingMessage={props.errorLoadingMessage}
-            invalidFormMessage={props.invalidFormMessage}
-            apiUrl={props.apiUrl}
+            title={cadastroTitle}
+            submitLabel={submitLabel}
+            successMessage={successMessage}
+            errorLoadingMessage={errorLoadingMessage}
+            invalidFormMessage={invalidFormMessage}
+            duplicateMessage={duplicateMessage}
+            apiUrl={apiUrl}
             editUser={editUser}
             setEditUser={setEditUser}
           />
@@ -29,12 +47,12 @@ const Menu = ({ editUser, setEditUser, ...props }) => {
         path="/consulta"
         element={
           <Consulta
-            title={props.consultaTitle}
-            noUsersMessage={props.noUsersMessage}
-            deleteSuccessMessage={props.deleteSuccessMessage}
-            tooltipMessage={props.tooltipMessage}
-            apiUrl={props.apiUrl}
-            setEditUser={setEditUser} // passa função para setar usuário a editar
+            title={consultaTitle}
+            noUsersMessage={noUsersMessage}
+            deleteSuccessMessage={deleteSuccessMessage}
+            tooltipMessage={tooltipMessage}
+            apiUrl={apiUrl}
+            setEditUser={setEditUser} // passa função para iniciar edição
           />
         }
       />
@@ -48,4 +66,6 @@ const Menu = ({ editUser, setEditUser, ...props }) => {
 };
 
 export default Menu;
+
+
 

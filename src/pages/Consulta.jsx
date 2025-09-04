@@ -1,52 +1,52 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserCard from '../components/UserCard';
 
-const Consulta = ({ title, noUsersMessage, deleteSuccessMessage, tooltipMessage, apiUrl }) => {
+const Consulta = ({
+  title = "Consultar Usuários",
+  noUsersMessage = "Nenhum usuário encontrado",
+  deleteSuccessMessage = "deletado(a) com sucesso!",
+  tooltipMessage = "Digite o nome do usuário a pesquisar",
+  apiUrl = "http://localhost:5000/usuarios",
+  setEditUser = () => {}
+}) => {
   const [usuarios, setUsuarios] = useState([]);
   const [filtroNome, setFiltroNome] = useState('');
   const [feedback, setFeedback] = useState('');
+  const navigate = useNavigate();
 
+  // Busca todos os usuários do backend
   useEffect(() => {
-    // função definida dentro do useEffect para não gerar warning
     const fetchUsuarios = async () => {
       try {
         const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('Erro ao carregar usuários');
         const data = await res.json();
         setUsuarios(data);
-      } catch {
-        setFeedback('Erro ao carregar usuários');
+      } catch (error) {
+        setFeedback(error.message);
       }
     };
     fetchUsuarios();
   }, [apiUrl]);
 
-  const handleDelete = async id => {
+  // Excluir usuário
+  const handleDelete = async (id) => {
     try {
-      await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao deletar usuário');
       setUsuarios(prev => prev.filter(u => u.id !== id));
-      setFeedback(deleteSuccessMessage || 'deletado(a) com sucesso!');
+      setFeedback(deleteSuccessMessage);
       setTimeout(() => setFeedback(''), 3000);
-    } catch {
-      setFeedback('Erro ao deletar usuário');
+    } catch (error) {
+      setFeedback(error.message);
     }
   };
 
-  const handleUpdate = async (id, updatedUser) => {
-    try {
-      const res = await fetch(`${apiUrl}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedUser)
-      });
-
-      if (!res.ok) throw new Error('Erro ao atualizar usuário');
-
-      setUsuarios(prev => prev.map(u => u.id === id ? { id, ...updatedUser } : u));
-      setFeedback('Usuário atualizado com sucesso!');
-      setTimeout(() => setFeedback(''), 3000);
-    } catch {
-      setFeedback('Erro ao atualizar usuário');
-    }
+  // Iniciar edição: envia usuário para o formulário de cadastro e redireciona
+  const handleEdit = (usuario) => {
+    setEditUser(usuario);
+    navigate('/cadastro');
   };
 
   const usuariosFiltrados = usuarios.filter(u =>
@@ -55,7 +55,8 @@ const Consulta = ({ title, noUsersMessage, deleteSuccessMessage, tooltipMessage,
 
   return (
     <main className="container mt-4">
-      <h2 className="mb-3">{title || "Consultar Usuários"}</h2>
+      <h2 className="mb-3">{title}</h2>
+
       {feedback && <div className="alert alert-success">{feedback}</div>}
 
       <input
@@ -65,7 +66,7 @@ const Consulta = ({ title, noUsersMessage, deleteSuccessMessage, tooltipMessage,
         onChange={e => setFiltroNome(e.target.value)}
         placeholder=""
         data-bs-toggle="tooltip"
-        title={tooltipMessage || 'Digite o nome do usuário a pesquisar'}
+        title={tooltipMessage}
       />
 
       <div className="table-responsive">
@@ -86,12 +87,12 @@ const Consulta = ({ title, noUsersMessage, deleteSuccessMessage, tooltipMessage,
                   key={usuario.id}
                   usuario={usuario}
                   onDelete={handleDelete}
-                  onUpdate={handleUpdate}
+                  onUpdate={handleEdit} // agora inicia edição
                 />
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">{noUsersMessage || "Nenhum usuário encontrado"}</td>
+                <td colSpan="5" className="text-center">{noUsersMessage}</td>
               </tr>
             )}
           </tbody>
@@ -102,6 +103,8 @@ const Consulta = ({ title, noUsersMessage, deleteSuccessMessage, tooltipMessage,
 };
 
 export default Consulta;
+
+
 
 
 

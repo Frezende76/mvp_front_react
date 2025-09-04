@@ -6,15 +6,13 @@ import Footer from './components/Footer';
 import banner from './assets/img/cad_users.png';
 
 function App() {
-  const [editUser, setEditUser] = useState(null); // usuário selecionado para editar
+  const [editUser, setEditUser] = useState(null); // estado compartilhado para edição
 
   return (
     <>
       <BrowserRouter>
         <Header bannerImg={banner} />
         <Menu
-          editUser={editUser}
-          setEditUser={setEditUser}
           homeSubtitulo="Bem-vindo ao sistema de cadastro!"
           cadastroTitle="Cadastrar Novo Usuário"
           submitLabel="Cadastrar"
@@ -26,7 +24,8 @@ function App() {
           noUsersMessage="Nenhum usuário encontrado"
           deleteSuccessMessage="deletado(a) com sucesso!"
           tooltipMessage="Digite o nome do usuário a pesquisar"
-          apiUrl="http://localhost:5000/usuarios"
+          editUser={editUser}             // passa para Cadastro.jsx
+          setEditUser={setEditUser}       // passa função para editar
         />
       </BrowserRouter>
       <Footer autor="Fabricio Rezende" ano={new Date().getFullYear()} />
@@ -35,6 +34,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
