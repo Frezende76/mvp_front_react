@@ -1,0 +1,111 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  background: linear-gradient(100deg,rgba(0, 100, 0, 1) 0%, rgba(0, 0, 0, 1)100%);
+  margin-bottom: 20%;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+    background: linear-gradient(100deg,rgba(0, 100, 0, 1) 0%, rgba(0, 0, 0, 1)100%);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.container p, h1{
+  color: #fff;
+}
+
+h2, h3{
+    text-align: center;
+    color: #fff;
+    margin-top: 20px;
+}
+
+.banner_cadastro {
+    width: 100%; 
+    margin-bottom: 20px;
+}
+
+.navbar-toggler{
+  background-color: white;
+}
+
+
+a.nav-link {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+a.nav-link:hover {
+  text-decoration: underline;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+i.bi.bi-trash{
+  color: darkred;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+    color: white;
+    text-align: center;
+}
+
+label, InputField{
+  color: white;
+}
+
+
+@media (max-width: 768px) {
+  main {
+    padding: 15px;
+  }
+
+  form {
+    gap: 8px;
+  }
+
+  table, th, td {
+    font-size: 14px;
+  }
+}
