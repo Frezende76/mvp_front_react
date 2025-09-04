@@ -1,15 +1,17 @@
-# React User Cadastro App
+# FrontEnd React Cadastro de usuários
 
-Esta é uma aplicação React para cadastro e consulta de usuários. Utiliza localStorage para persistência local e consome uma API externa para preenchimento automático do formulário.
+Esta é uma aplicação React para cadastro, edição, consulta e exclusão de usuários. Os dados são salvos em um banco de dados SQLite através de uma API backend, e o formulário pode ser preenchido automaticamente via API externa (JSONPlaceholder).
 
 ## 🔧 Funcionalidades
 
 - Cadastro de usuários com validação de campos
-- Consulta e exclusão de usuários cadastrados
+- Consulta de usuários cadastrados
+- Edição de usuários via modal
+- Exclusão de usuários
 - Dropdown de nomes carregado via API externa
-- Interface responsiva com Bootstrap
-- Menu de navegação com ícones e tooltips
-- Layout adaptável com menu hamburguer em dispositivos móveis
+- Interface responsiva com Bootstrap 5
+- Menu de navegação com ícones, tooltips e menu hambúrguer em dispositivos móveis
+- Atualização automática da tabela após cadastro, edição ou exclusão
 
 ## 🚀 Tecnologias
 
@@ -18,12 +20,13 @@ Esta é uma aplicação React para cadastro e consulta de usuários. Utiliza loc
 - React Router DOM
 - Bootstrap 5
 - API externa: JSONPlaceholder
+- Backend: API REST com SQLite
 
 ## 📌 Clonando o Repositório
 Se você deseja baixar o projeto diretamente do GitHub, use o comando abaixo:
 
 ```bash
-git clone https://github.com/Frezende76/mvp_react_user_cadastro.git
+git clone https://github.com/Frezende76/mvp_front_react.git
 
 ```
 
@@ -32,7 +35,7 @@ Caso contrário, você pode baixar o código compactado (.zip) e extraí-lo manu
 Entre no diretório do projeto:
 
 ```bash
-cd mvp_react_user_cadastro
+cd mvp_front_react
 ```
 
 ---
