@@ -21,6 +21,7 @@ Esta é uma aplicação React para cadastro, edição, consulta e exclusão de u
 - Bootstrap 5
 - API externa: JSONPlaceholder
 - Backend: API REST com SQLite
+- Docker para containerização
 
 ## 📌 Clonando o Repositório
 Se você deseja baixar o projeto diretamente do GitHub, use o comando abaixo:
@@ -52,6 +53,25 @@ npm run dev
 
 Acesse em `http://localhost:5173`.
 
+## 🐳 Como executar via Docker
+
+   1.  Build da imagem Docker:
+
+    ```bash
+
+    docker build -t meu-frontend-react .
+
+    ```
+   2. Rodar o container:
+
+    ```bash
+
+    docker run -p 3000:80 meu-frontend-react
+
+    ```
+
+   3. Acesse em http://localhost:3000.
+
 ## 📂 Estrutura
 
 ```
@@ -74,9 +94,12 @@ Acesse em `http://localhost:5173`.
 │   ├── App.jsx
 │   ├── index.css
 │   ├── main.jsx
+│   ├── .dockerignore
 │   ├── .gitignore
+│   ├── Dockerfile
 │   ├── eslint.config.js
 │   ├── index.html
+│   ├── nginx.conf
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── README.md
