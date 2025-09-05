@@ -69,8 +69,14 @@ const Cadastro = ({
     try {
       const resList = await fetch(apiUrl);
       const usuariosExistentes = await resList.json();
+
+      // Verifica duplicidade ignorando o próprio usuário em edição
       const duplicado = usuariosExistentes.some(
-        u => u.nome === formData.nome && u.email === formData.email && u.telefone === formData.telefone
+        u =>
+          u.nome === formData.nome &&
+          u.email === formData.email &&
+          u.telefone === formData.telefone &&
+          u.id !== formData.id
       );
 
       if (duplicado && !formData.id) {
@@ -100,12 +106,15 @@ const Cadastro = ({
       // Limpa formulário
       limparFormulario();
 
-      // Se for edição, aguarda 2 segundos e depois redireciona
       if (formData.id) {
+        // Se for edição, espera 2s para mostrar mensagem e redireciona
         setTimeout(() => {
           setFeedback({ message: '', type: '' }); // limpa mensagem
-          onSuccess(); // redireciona para a tabela
-        }, 2000); // tempo para exibir a mensagem antes de redirecionar
+          onSuccess(); // redireciona para tabela
+        }, 2000);
+      } else {
+        // Se for cadastro normal, limpa mensagem após 3s
+        setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
       }
 
     } catch (error) {
@@ -153,6 +162,7 @@ const Cadastro = ({
 };
 
 export default Cadastro;
+
 
 
 
