@@ -8,7 +8,7 @@ const Consulta = ({
   deleteSuccessMessage = "deletado(a) com sucesso!",
   tooltipMessage = "Digite o nome do usuário a pesquisar",
   apiUrl = "http://localhost:5000/usuarios",
-  setEditUser = () => {}
+  setEditUser
 }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [filtroNome, setFiltroNome] = useState('');
@@ -43,10 +43,10 @@ const Consulta = ({
     }
   };
 
-  // Iniciar edição: envia usuário para o formulário de cadastro e redireciona
+  // Iniciar edição: envia usuário para o formulário de edição
   const handleEdit = (usuario) => {
     setEditUser(usuario);
-    navigate('/cadastro');
+    navigate(`/editar/${usuario.id}`);
   };
 
   const usuariosFiltrados = usuarios.filter(u =>
@@ -87,7 +87,7 @@ const Consulta = ({
                   key={usuario.id}
                   usuario={usuario}
                   onDelete={handleDelete}
-                  onUpdate={handleEdit} // agora inicia edição
+                  onUpdate={handleEdit} // agora inicia edição corretamente
                 />
               ))
             ) : (
@@ -103,6 +103,7 @@ const Consulta = ({
 };
 
 export default Consulta;
+
 
 
 

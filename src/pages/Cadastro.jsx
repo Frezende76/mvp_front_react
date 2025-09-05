@@ -11,11 +11,12 @@ const Cadastro = ({
   duplicateMessage = "já cadastrado(a) no sistema.",
   apiUrl = 'http://localhost:5000/usuarios',
   editUser = null,
-  setEditUser = () => {}
+  setEditUser = () => {},
+  onSuccess = () => {} // callback opcional para redirecionamento após sucesso
 }) => {
   const [formData, setFormData] = useState({ id: null, nome: '', endereco: '', email: '', telefone: '' });
   const [usuariosApi, setUsuariosApi] = useState([]);
-  const [feedback, setFeedback] = useState({ message: '', type: '' }); // agora inclui tipo: 'success' | 'error'
+  const [feedback, setFeedback] = useState({ message: '', type: '' });
 
   // Preenchimento da lista de nomes via API externa
   useEffect(() => {
@@ -75,7 +76,7 @@ const Cadastro = ({
       if (duplicado && !formData.id) {
         setFeedback({ message: `${formData.nome} ${duplicateMessage}`, type: 'error' });
         setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
-        limparFormulario(); // Limpa campos mesmo se duplicado
+        limparFormulario();
         return;
       }
 
@@ -93,9 +94,20 @@ const Cadastro = ({
         throw new Error(errData.message || 'Erro ao salvar usuário');
       }
 
+      // Mostra mensagem de sucesso
       setFeedback({ message: `${formData.nome} ${successMessage}`, type: 'success' });
-      setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
+
+      // Limpa formulário
       limparFormulario();
+
+      // Se for edição, aguarda 2 segundos e depois redireciona
+      if (formData.id) {
+        setTimeout(() => {
+          setFeedback({ message: '', type: '' }); // limpa mensagem
+          onSuccess(); // redireciona para a tabela
+        }, 2000); // tempo para exibir a mensagem antes de redirecionar
+      }
+
     } catch (error) {
       setFeedback({ message: error.message, type: 'error' });
       setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
@@ -133,7 +145,7 @@ const Cadastro = ({
         <InputField label="Telefone:" name="telefone" value={formData.telefone} onChange={handleChange} />
 
         <button className="btn btn-primary" type="submit">
-          {submitLabel || (formData.id ? 'Atualizar' : 'Cadastrar')}
+          {formData.id ? 'Atualizar' : submitLabel || 'Cadastrar'}
         </button>
       </form>
     </main>
@@ -141,6 +153,8 @@ const Cadastro = ({
 };
 
 export default Cadastro;
+
+
 
 
 

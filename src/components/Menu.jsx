@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
 import Home from '../pages/Home';
 import Cadastro from '../pages/Cadastro';
 import Consulta from '../pages/Consulta';
+import Edicao from '../pages/Edicao';
 import NotFound from '../pages/NotFound';
 
 const Menu = ({
@@ -17,15 +17,15 @@ const Menu = ({
   noUsersMessage,
   deleteSuccessMessage,
   tooltipMessage,
-  apiUrl = 'http://localhost:5000/usuarios'
+  apiUrl = 'http://localhost:5000/usuarios',
+  editUser,
+  setEditUser
 }) => {
-  // Estado para controlar usuário em edição
-  const [editUser, setEditUser] = useState(null);
-
   return (
     <Routes>
       <Route path="/" element={<Home subtitulo={homeSubtitulo} />} />
 
+      {/* Rota de cadastro */}
       <Route
         path="/cadastro"
         element={
@@ -43,6 +43,18 @@ const Menu = ({
         }
       />
 
+      {/* Rota de edição */}
+      <Route
+        path="/editar/:id"
+        element={
+          <Edicao
+            editUser={editUser}
+            setEditUser={setEditUser}
+          />
+        }
+      />
+
+      {/* Rota de consulta */}
       <Route
         path="/consulta"
         element={
@@ -52,7 +64,7 @@ const Menu = ({
             deleteSuccessMessage={deleteSuccessMessage}
             tooltipMessage={tooltipMessage}
             apiUrl={apiUrl}
-            setEditUser={setEditUser} // passa função para iniciar edição
+            setEditUser={setEditUser}
           />
         }
       />
@@ -66,6 +78,7 @@ const Menu = ({
 };
 
 export default Menu;
+
 
 
 
