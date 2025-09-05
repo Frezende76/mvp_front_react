@@ -15,7 +15,7 @@ const Cadastro = ({
 }) => {
   const [formData, setFormData] = useState({ id: null, nome: '', endereco: '', email: '', telefone: '' });
   const [usuariosApi, setUsuariosApi] = useState([]);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState({ message: '', type: '' }); // agora inclui tipo: 'success' | 'error'
 
   // Preenchimento da lista de nomes via API externa
   useEffect(() => {
@@ -26,7 +26,7 @@ const Cadastro = ({
         const data = await res.json();
         setUsuariosApi(data);
       } catch {
-        setFeedback(errorLoadingMessage);
+        setFeedback({ message: errorLoadingMessage, type: 'error' });
       }
     };
     fetchUsuariosApi();
@@ -51,16 +51,21 @@ const Cadastro = ({
     }
   };
 
+  const limparFormulario = () => {
+    setFormData({ id: null, nome: '', endereco: '', email: '', telefone: '' });
+    setEditUser(null);
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
     if (!validateForm(formData)) {
-      setFeedback(invalidFormMessage);
+      setFeedback({ message: invalidFormMessage, type: 'error' });
+      setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
       return;
     }
 
     try {
-      // Verificar duplicado localmente
       const resList = await fetch(apiUrl);
       const usuariosExistentes = await resList.json();
       const duplicado = usuariosExistentes.some(
@@ -68,7 +73,9 @@ const Cadastro = ({
       );
 
       if (duplicado && !formData.id) {
-        setFeedback(`${formData.nome} ${duplicateMessage}`);
+        setFeedback({ message: `${formData.nome} ${duplicateMessage}`, type: 'error' });
+        setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
+        limparFormulario(); // Limpa campos mesmo se duplicado
         return;
       }
 
@@ -81,22 +88,28 @@ const Cadastro = ({
         body: JSON.stringify(formData)
       });
 
-      if (!res.ok) throw new Error('Erro ao salvar usuário');
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || 'Erro ao salvar usuário');
+      }
 
-      setFeedback(`${formData.nome} ${successMessage}`);
-      setFormData({ id: null, nome: '', endereco: '', email: '', telefone: '' });
-      setEditUser(null);
-
-      setTimeout(() => setFeedback(''), 3000);
+      setFeedback({ message: `${formData.nome} ${successMessage}`, type: 'success' });
+      setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
+      limparFormulario();
     } catch (error) {
-      setFeedback(error.message);
+      setFeedback({ message: error.message, type: 'error' });
+      setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
     }
   };
 
   return (
     <main className="container mt-4">
       <h2>{title}</h2>
-      {feedback && <div className="alert alert-success">{feedback}</div>}
+      {feedback.message && (
+        <div className={`alert ${feedback.type === 'success' ? 'alert-success' : 'alert-danger'}`}>
+          {feedback.message}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -128,6 +141,7 @@ const Cadastro = ({
 };
 
 export default Cadastro;
+
 
 
 
