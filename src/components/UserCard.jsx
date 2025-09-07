@@ -11,7 +11,7 @@ const UserCard = ({ usuario, onDelete, onUpdate }) => {
         {/* Botão Editar */}
         <button
           className="btn border-0 btn-sm me-2"
-          onClick={() => onUpdate(usuario)}
+          onClick={onUpdate}
           title={`Editar ${nome}`}
           data-bs-toggle="tooltip"
           data-bs-placement="top"
@@ -22,7 +22,7 @@ const UserCard = ({ usuario, onDelete, onUpdate }) => {
         {/* Botão Excluir */}
         <button
           className="btn border-0 btn-sm"
-          onClick={() => onDelete(nome)}
+          onClick={onDelete}
           title={`Excluir ${nome}`}
           data-bs-toggle="tooltip"
           data-bs-placement="top"
@@ -35,6 +35,7 @@ const UserCard = ({ usuario, onDelete, onUpdate }) => {
 };
 
 export default UserCard;
+
 
 
 

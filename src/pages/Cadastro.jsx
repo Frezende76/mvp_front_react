@@ -18,7 +18,7 @@ const Cadastro = ({
   const [usuariosApi, setUsuariosApi] = useState([]);
   const [feedback, setFeedback] = useState({ message: '', type: '' });
 
-  // Preenche lista de nomes via API externa
+  // Carrega lista de usuários externos
   useEffect(() => {
     const fetchUsuariosApi = async () => {
       try {
@@ -33,22 +33,27 @@ const Cadastro = ({
     fetchUsuariosApi();
   }, [errorLoadingMessage]);
 
-  // Carregar usuário para edição
+  // Carrega dados do usuário para edição apenas uma vez
   useEffect(() => {
-    if (editUser) setFormData(editUser);
-  }, [editUser]);
+    if (editUser) {
+      setFormData(editUser);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // <-- removemos editUser da dependência para não sobrescrever ao digitar
 
   const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSelect = e => {
-    const selecionado = usuariosApi.find(u => u.name === e.target.value);
-    if (selecionado) {
-      setFormData({
-        nome: selecionado.name,
-        endereco: `${selecionado.address.street}, ${selecionado.address.city}`,
-        email: selecionado.email,
-        telefone: selecionado.phone
-      });
+    if (!editUser) {
+      const selecionado = usuariosApi.find(u => u.name === e.target.value);
+      if (selecionado) {
+        setFormData({
+          nome: selecionado.name,
+          endereco: `${selecionado.address.street}, ${selecionado.address.city}`,
+          email: selecionado.email,
+          telefone: selecionado.phone
+        });
+      }
     }
   };
 
@@ -67,31 +72,34 @@ const Cadastro = ({
     }
 
     try {
-      const resList = await fetch(apiUrl);
-      const usuariosExistentes = await resList.json();
+      const method = editUser ? 'PUT' : 'POST';
+      const url = editUser ? `${apiUrl}/${editUser.nome}` : apiUrl;
 
-      // Verifica duplicidade
-      const duplicado = usuariosExistentes.some(
-        u =>
+      // Checa duplicidade somente no POST
+      if (!editUser) {
+        const resList = await fetch(apiUrl);
+        const usuariosExistentes = await resList.json();
+        const duplicado = usuariosExistentes.some(u =>
           u.nome === formData.nome &&
           u.email === formData.email &&
           u.telefone === formData.telefone
-      );
-
-      if (duplicado && !editUser) {
-        setFeedback({ message: `${formData.nome} ${duplicateMessage}`, type: 'error' });
-        setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
-        limparFormulario();
-        return;
+        );
+        if (duplicado) {
+          setFeedback({ message: `${formData.nome} ${duplicateMessage}`, type: 'error' });
+          setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
+          limparFormulario();
+          return;
+        }
       }
 
-      const method = editUser ? 'PUT' : 'POST';
-      const url = editUser ? `${apiUrl}/${formData.nome}` : apiUrl;
+      const bodyData = editUser
+        ? { endereco: formData.endereco, email: formData.email, telefone: formData.telefone }
+        : formData;
 
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(bodyData)
       });
 
       if (!res.ok) {
@@ -99,10 +107,8 @@ const Cadastro = ({
         throw new Error(errData.message || 'Erro ao salvar usuário');
       }
 
-      // Sucesso
       setFeedback({ message: `${formData.nome} ${successMessage}`, type: 'success' });
       limparFormulario();
-
       if (editUser) {
         setTimeout(() => {
           setFeedback({ message: '', type: '' });
@@ -133,7 +139,7 @@ const Cadastro = ({
             className="form-select"
             value={formData.nome}
             onChange={handleSelect}
-            data-bs-toggle="tooltip"
+            disabled={!!editUser} // Nome não editável
             title="Selecione um nome da lista"
           >
             <option value=""></option>
@@ -156,6 +162,22 @@ const Cadastro = ({
 };
 
 export default Cadastro;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
