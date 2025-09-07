@@ -12,13 +12,13 @@ const Cadastro = ({
   apiUrl = 'http://localhost:5000/usuarios',
   editUser = null,
   setEditUser = () => {},
-  onSuccess = () => {} // callback opcional para redirecionamento após sucesso
+  onSuccess = () => {}
 }) => {
-  const [formData, setFormData] = useState({ id: null, nome: '', endereco: '', email: '', telefone: '' });
+  const [formData, setFormData] = useState({ nome: '', endereco: '', email: '', telefone: '' });
   const [usuariosApi, setUsuariosApi] = useState([]);
   const [feedback, setFeedback] = useState({ message: '', type: '' });
 
-  // Preenchimento da lista de nomes via API externa
+  // Preenche lista de nomes via API externa
   useEffect(() => {
     const fetchUsuariosApi = async () => {
       try {
@@ -53,7 +53,7 @@ const Cadastro = ({
   };
 
   const limparFormulario = () => {
-    setFormData({ id: null, nome: '', endereco: '', email: '', telefone: '' });
+    setFormData({ nome: '', endereco: '', email: '', telefone: '' });
     setEditUser(null);
   };
 
@@ -70,24 +70,23 @@ const Cadastro = ({
       const resList = await fetch(apiUrl);
       const usuariosExistentes = await resList.json();
 
-      // Verifica duplicidade ignorando o próprio usuário em edição
+      // Verifica duplicidade
       const duplicado = usuariosExistentes.some(
         u =>
           u.nome === formData.nome &&
           u.email === formData.email &&
-          u.telefone === formData.telefone &&
-          u.id !== formData.id
+          u.telefone === formData.telefone
       );
 
-      if (duplicado && !formData.id) {
+      if (duplicado && !editUser) {
         setFeedback({ message: `${formData.nome} ${duplicateMessage}`, type: 'error' });
         setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
         limparFormulario();
         return;
       }
 
-      const method = formData.id ? 'PUT' : 'POST';
-      const url = formData.id ? `${apiUrl}/${formData.id}` : apiUrl;
+      const method = editUser ? 'PUT' : 'POST';
+      const url = editUser ? `${apiUrl}/${formData.nome}` : apiUrl;
 
       const res = await fetch(url, {
         method,
@@ -100,23 +99,18 @@ const Cadastro = ({
         throw new Error(errData.message || 'Erro ao salvar usuário');
       }
 
-      // Mostra mensagem de sucesso
+      // Sucesso
       setFeedback({ message: `${formData.nome} ${successMessage}`, type: 'success' });
-
-      // Limpa formulário
       limparFormulario();
 
-      if (formData.id) {
-        // Se for edição, espera 2s para mostrar mensagem e redireciona
+      if (editUser) {
         setTimeout(() => {
-          setFeedback({ message: '', type: '' }); // limpa mensagem
-          onSuccess(); // redireciona para tabela
+          setFeedback({ message: '', type: '' });
+          onSuccess();
         }, 2000);
       } else {
-        // Se for cadastro normal, limpa mensagem após 3s
         setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
       }
-
     } catch (error) {
       setFeedback({ message: error.message, type: 'error' });
       setTimeout(() => setFeedback({ message: '', type: '' }), 3000);
@@ -154,7 +148,7 @@ const Cadastro = ({
         <InputField label="Telefone:" name="telefone" value={formData.telefone} onChange={handleChange} />
 
         <button className="btn btn-primary" type="submit">
-          {formData.id ? 'Atualizar' : submitLabel || 'Cadastrar'}
+          {editUser ? 'Atualizar' : submitLabel || 'Cadastrar'}
         </button>
       </form>
     </main>

@@ -15,7 +15,7 @@ const Consulta = ({
   const [feedback, setFeedback] = useState('');
   const navigate = useNavigate();
 
-  // Busca todos os usuários do backend
+  // Buscar usuários
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
@@ -30,12 +30,12 @@ const Consulta = ({
     fetchUsuarios();
   }, [apiUrl]);
 
-  // Excluir usuário
-  const handleDelete = async (id) => {
+  // Excluir por nome
+  const handleDelete = async (nome) => {
     try {
-      const res = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${apiUrl}/${nome}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Erro ao deletar usuário');
-      setUsuarios(prev => prev.filter(u => u.id !== id));
+      setUsuarios(prev => prev.filter(u => u.nome !== nome));
       setFeedback(deleteSuccessMessage);
       setTimeout(() => setFeedback(''), 3000);
     } catch (error) {
@@ -43,10 +43,10 @@ const Consulta = ({
     }
   };
 
-  // Iniciar edição: envia usuário para o formulário de edição
+  // Editar por nome
   const handleEdit = (usuario) => {
     setEditUser(usuario);
-    navigate(`/editar/${usuario.id}`);
+    navigate(`/editar/${usuario.nome}`);
   };
 
   const usuariosFiltrados = usuarios.filter(u =>
@@ -84,10 +84,10 @@ const Consulta = ({
             {usuariosFiltrados.length > 0 ? (
               usuariosFiltrados.map(usuario => (
                 <UserCard
-                  key={usuario.id}
+                  key={usuario.nome}
                   usuario={usuario}
-                  onDelete={handleDelete}
-                  onUpdate={handleEdit} // agora inicia edição corretamente
+                  onDelete={() => handleDelete(usuario.nome)}
+                  onUpdate={() => handleEdit(usuario)}
                 />
               ))
             ) : (
@@ -103,6 +103,7 @@ const Consulta = ({
 };
 
 export default Consulta;
+
 
 
 

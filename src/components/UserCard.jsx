@@ -1,5 +1,5 @@
 const UserCard = ({ usuario, onDelete, onUpdate }) => {
-  const { id, nome, endereco, email, telefone } = usuario;
+  const { nome, endereco, email, telefone } = usuario;
 
   return (
     <tr>
@@ -22,7 +22,7 @@ const UserCard = ({ usuario, onDelete, onUpdate }) => {
         {/* Botão Excluir */}
         <button
           className="btn border-0 btn-sm"
-          onClick={() => onDelete(id)}
+          onClick={() => onDelete(nome)}
           title={`Excluir ${nome}`}
           data-bs-toggle="tooltip"
           data-bs-placement="top"
@@ -35,6 +35,7 @@ const UserCard = ({ usuario, onDelete, onUpdate }) => {
 };
 
 export default UserCard;
+
 
 
 
