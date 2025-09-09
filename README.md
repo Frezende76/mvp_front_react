@@ -93,6 +93,7 @@ docker run -p 3000:80 meu-frontend-react
 │   |  ├── pages/
 │   │  |   ├── Cadastro.jsx
 │   │  |   ├── Consulta.jsx
+│   │  |   ├── Edicao.jsx
 │   │  |   ├── Home.jsx
 │   │  |   ├── NotFound.jsx
 │   |  ├── utils/
