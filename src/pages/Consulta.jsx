@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserCard from '../components/UserCard';
 
@@ -12,99 +12,95 @@ const Consulta = ({
 }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [filtroNome, setFiltroNome] = useState('');
-  const [feedback, setFeedback] = useState({ message: '', type: '', visible: false });
+  const [feedback, setFeedback] = useState('');
   const navigate = useNavigate();
 
-  // Buscar todos os usuários inicialmente
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const res = await fetch(`${apiUrl}/todos`);
-        if (!res.ok) throw new Error('Erro ao carregar usuários');
-        const data = await res.json();
-        setUsuarios(data);
-      } catch (error) {
-        showFeedback(error.message, 'error');
-      }
-    };
-    fetchUsuarios();
-  }, [apiUrl]);
-
-  const showFeedback = (message, type = 'success', duration = 3000) => {
-    setFeedback({ message, type, visible: true });
-    setTimeout(() => setFeedback(prev => ({ ...prev, visible: false })), duration);
-  };
-
-  // Função para buscar usuário específico ou todos
-  const buscarUsuario = async () => {
-    if (!filtroNome) {
+  // Buscar todos os usuários
+  const fetchTodosUsuarios = useCallback(async () => {
+    try {
       const res = await fetch(`${apiUrl}/todos`);
+      if (!res.ok) throw new Error('Erro ao carregar usuários');
       const data = await res.json();
       setUsuarios(data);
-      return;
+    } catch (err) {
+      setFeedback(err.message);
     }
+  }, [apiUrl]);
 
+  // Buscar usuário por nome
+  const fetchUsuarioPorNome = useCallback(async (nome) => {
     try {
-      const res = await fetch(`${apiUrl}/consultar/${filtroNome}`);
+      const res = await fetch(`${apiUrl}/consultar/${nome}`);
       if (res.status === 404) {
-        setUsuarios([]);
-        showFeedback('Usuário não encontrado', 'error');
+        setUsuarios([]); // nenhum encontrado
         return;
       }
+      if (!res.ok) throw new Error('Erro ao consultar usuário');
       const data = await res.json();
-      setUsuarios([data]);
-    } catch (error) {
-      setUsuarios([]);
-      showFeedback(error.message || 'Erro ao buscar usuário', 'error');
+      setUsuarios(Array.isArray(data) ? data : [data]);
+    } catch (err) {
+      setFeedback(err.message);
     }
-  };
+  }, [apiUrl]);
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      buscarUsuario();
+  // Carrega todos ao montar
+  useEffect(() => {
+    fetchTodosUsuarios();
+  }, [fetchTodosUsuarios]);
+
+  // Quando o campo for limpo, recarregar todos
+  useEffect(() => {
+    if (!filtroNome.trim()) {
+      fetchTodosUsuarios();
     }
-  };
+  }, [filtroNome, fetchTodosUsuarios]);
 
+  // Excluir por nome
   const handleDelete = async (nome) => {
     try {
       const res = await fetch(`${apiUrl}/deletar/${nome}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Erro ao deletar usuário');
-      setUsuarios(prev => prev.filter(u => u.nome !== nome));
-      showFeedback(deleteSuccessMessage, 'success');
-    } catch (error) {
-      showFeedback(error.message, 'error');
+      fetchTodosUsuarios();
+      setFeedback(deleteSuccessMessage);
+      setTimeout(() => setFeedback(''), 3000);
+    } catch (err) {
+      setFeedback(err.message);
     }
   };
 
+  // Editar por nome
   const handleEdit = (usuario) => {
     setEditUser(usuario);
     navigate(`/editar/${usuario.nome}`);
+  };
+
+  // Consultar via botão
+  const handleConsultar = () => {
+    if (filtroNome.trim()) {
+      fetchUsuarioPorNome(filtroNome);
+    } else {
+      fetchTodosUsuarios();
+    }
   };
 
   return (
     <main className="container mt-4">
       <h2 className="mb-3">{title}</h2>
 
-      {feedback.visible && (
-        <div className={`alert ${feedback.type === 'success' ? 'alert-success' : 'alert-danger'} fade show`} role="alert">
-          {feedback.message}
-        </div>
-      )}
+      {feedback && <div className="alert alert-success">{feedback}</div>}
 
-      <div className="input-group mb-3">
+      <div className="mb-3 d-flex gap-2">
         <input
           type="text"
           className="form-control"
           value={filtroNome}
-          onChange={e => setFiltroNome(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Digite o nome do usuário"
+          onChange={(e) => setFiltroNome(e.target.value)}
+          placeholder="Digite o nome do cliente"
           data-bs-toggle="tooltip"
           title={tooltipMessage}
         />
-        <button className="btn btn-primary" type="button" onClick={buscarUsuario}>
-          Buscar
+        <button className="btn btn-primary" onClick={handleConsultar}>
+          Consultar
         </button>
       </div>
 
@@ -121,7 +117,7 @@ const Consulta = ({
           </thead>
           <tbody>
             {usuarios.length > 0 ? (
-              usuarios.map(usuario => (
+              usuarios.map((usuario) => (
                 <UserCard
                   key={usuario.nome}
                   usuario={usuario}
@@ -131,7 +127,9 @@ const Consulta = ({
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">{noUsersMessage}</td>
+                <td colSpan="5" className="text-center">
+                  {noUsersMessage}
+                </td>
               </tr>
             )}
           </tbody>
@@ -142,6 +140,20 @@ const Consulta = ({
 };
 
 export default Consulta;
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+
+
+
+
+
+
+
+
+
 
 
 
