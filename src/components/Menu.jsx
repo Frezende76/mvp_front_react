@@ -45,7 +45,7 @@ const Menu = ({
 
       {/* Rota de edição */}
       <Route
-        path="/editar/:id"
+        path="/editar/:nome"
         element={
           <Edicao
             editUser={editUser}

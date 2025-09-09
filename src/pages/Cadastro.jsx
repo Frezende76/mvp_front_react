@@ -39,7 +39,7 @@ const Cadastro = ({
       setFormData(editUser);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // <-- removemos editUser da dependência para não sobrescrever ao digitar
+  }, []);
 
   const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -73,11 +73,13 @@ const Cadastro = ({
 
     try {
       const method = editUser ? 'PUT' : 'POST';
-      const url = editUser ? `${apiUrl}/${editUser.nome}` : apiUrl;
+      const url = editUser
+        ? `${apiUrl}/editar/${editUser.nome}`
+        : `${apiUrl}/cadastrar`;
 
       // Checa duplicidade somente no POST
       if (!editUser) {
-        const resList = await fetch(apiUrl);
+        const resList = await fetch(`${apiUrl}/todos`);
         const usuariosExistentes = await resList.json();
         const duplicado = usuariosExistentes.some(u =>
           u.nome === formData.nome &&
@@ -139,7 +141,7 @@ const Cadastro = ({
             className="form-select"
             value={formData.nome}
             onChange={handleSelect}
-            disabled={!!editUser} // Nome não editável
+            disabled={!!editUser}
             title="Selecione um nome da lista"
           >
             <option value=""></option>
@@ -162,6 +164,7 @@ const Cadastro = ({
 };
 
 export default Cadastro;
+
 
 
 

@@ -12,62 +12,101 @@ const Consulta = ({
 }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [filtroNome, setFiltroNome] = useState('');
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState({ message: '', type: '', visible: false });
   const navigate = useNavigate();
 
-  // Buscar usuários
+  // Buscar todos os usuários inicialmente
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const res = await fetch(apiUrl);
+        const res = await fetch(`${apiUrl}/todos`);
         if (!res.ok) throw new Error('Erro ao carregar usuários');
         const data = await res.json();
         setUsuarios(data);
       } catch (error) {
-        setFeedback(error.message);
+        showFeedback(error.message, 'error');
       }
     };
     fetchUsuarios();
   }, [apiUrl]);
 
-  // Excluir por nome
-  const handleDelete = async (nome) => {
+  const showFeedback = (message, type = 'success', duration = 3000) => {
+    setFeedback({ message, type, visible: true });
+    setTimeout(() => setFeedback(prev => ({ ...prev, visible: false })), duration);
+  };
+
+  // Função para buscar usuário específico ou todos
+  const buscarUsuario = async () => {
+    if (!filtroNome) {
+      const res = await fetch(`${apiUrl}/todos`);
+      const data = await res.json();
+      setUsuarios(data);
+      return;
+    }
+
     try {
-      const res = await fetch(`${apiUrl}/${nome}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Erro ao deletar usuário');
-      setUsuarios(prev => prev.filter(u => u.nome !== nome));
-      setFeedback(deleteSuccessMessage);
-      setTimeout(() => setFeedback(''), 3000);
+      const res = await fetch(`${apiUrl}/consultar/${filtroNome}`);
+      if (res.status === 404) {
+        setUsuarios([]);
+        showFeedback('Usuário não encontrado', 'error');
+        return;
+      }
+      const data = await res.json();
+      setUsuarios([data]);
     } catch (error) {
-      setFeedback(error.message);
+      setUsuarios([]);
+      showFeedback(error.message || 'Erro ao buscar usuário', 'error');
     }
   };
 
-  // Editar por nome
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      buscarUsuario();
+    }
+  };
+
+  const handleDelete = async (nome) => {
+    try {
+      const res = await fetch(`${apiUrl}/deletar/${nome}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao deletar usuário');
+      setUsuarios(prev => prev.filter(u => u.nome !== nome));
+      showFeedback(deleteSuccessMessage, 'success');
+    } catch (error) {
+      showFeedback(error.message, 'error');
+    }
+  };
+
   const handleEdit = (usuario) => {
     setEditUser(usuario);
     navigate(`/editar/${usuario.nome}`);
   };
 
-  const usuariosFiltrados = usuarios.filter(u =>
-    u.nome.toLowerCase().includes(filtroNome.toLowerCase())
-  );
-
   return (
     <main className="container mt-4">
       <h2 className="mb-3">{title}</h2>
 
-      {feedback && <div className="alert alert-success">{feedback}</div>}
+      {feedback.visible && (
+        <div className={`alert ${feedback.type === 'success' ? 'alert-success' : 'alert-danger'} fade show`} role="alert">
+          {feedback.message}
+        </div>
+      )}
 
-      <input
-        type="text"
-        className="form-control mb-3"
-        value={filtroNome}
-        onChange={e => setFiltroNome(e.target.value)}
-        placeholder=""
-        data-bs-toggle="tooltip"
-        title={tooltipMessage}
-      />
+      <div className="input-group mb-3">
+        <input
+          type="text"
+          className="form-control"
+          value={filtroNome}
+          onChange={e => setFiltroNome(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="Digite o nome do usuário"
+          data-bs-toggle="tooltip"
+          title={tooltipMessage}
+        />
+        <button className="btn btn-primary" type="button" onClick={buscarUsuario}>
+          Buscar
+        </button>
+      </div>
 
       <div className="table-responsive">
         <table className="table table-striped table-bordered">
@@ -81,8 +120,8 @@ const Consulta = ({
             </tr>
           </thead>
           <tbody>
-            {usuariosFiltrados.length > 0 ? (
-              usuariosFiltrados.map(usuario => (
+            {usuarios.length > 0 ? (
+              usuarios.map(usuario => (
                 <UserCard
                   key={usuario.nome}
                   usuario={usuario}
@@ -103,6 +142,7 @@ const Consulta = ({
 };
 
 export default Consulta;
+
 
 
 
