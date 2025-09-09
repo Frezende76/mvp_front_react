@@ -41,70 +41,81 @@ cd mvp_front_react
 
 ---
 
-## ▶️ Como executar
+## ▶️ Como executar local
+
+### 1. Instale as dependências
 
 ```bash
-# Instale as dependências
 npm install
+```
 
-# Inicie o servidor de desenvolvimento
+### Inicie o servidor de desenvolvimento
+
+```bash
 npm run dev
 ```
 
-Acesse em `http://localhost:5173`.
+### 3. Acesse em `http://localhost:5173`.
 
 ## 🐳 Como executar via Docker
 
-   1.  Build da imagem Docker:
+### 1.  Build da imagem Docker:
 
-    ```bash
+```bash
 
-    docker build -t meu-frontend-react .
+docker build -t meu-frontend-react .
 
-    ```
-   2. Rodar o container:
+```
+### 2. Rodar o container:
 
-    ```bash
+```bash
 
-    docker run -p 3000:80 meu-frontend-react
+docker run -p 3000:80 meu-frontend-react
 
-    ```
+```
 
-   3. Acesse em http://localhost:3000.
+### 3. Acesse em http://localhost:3000.
+
 
 ## 📂 Estrutura
 
 ```
-├── src/
-│   ├── assets/img/
-│   │   └── cad_users.png
-│   ├── components/
-│   │   ├── Footer.jsx
-│   │   ├── Header.jsx
-│   │   ├── InputField.jsx
-│   │   ├── Menu.jsx
-│   │   ├── UserCard.jsx
-│   ├── pages/
-│   │   ├── Cadastro.jsx
-│   │   ├── Consulta.jsx
-│   │   ├── Home.jsx
-│   │   ├── NotFound.jsx
-│   ├── utils/
-│   │   ├── validateForm.js
+├── mvp_front_react
+|   ├──src/
+│   |  ├── assets/img/
+│   │  |   └── cad_users.png
+│   |  ├── components/
+│   │  |   ├── Footer.jsx
+│   │  |   ├── Header.jsx
+│   │  |   ├── InputField.jsx
+│   │  |   ├── Menu.jsx
+│   │  |   ├── UserCard.jsx
+│   |  ├── pages/
+│   │  |   ├── Cadastro.jsx
+│   │  |   ├── Consulta.jsx
+│   │  |   ├── Home.jsx
+│   │  |   ├── NotFound.jsx
+│   |  ├── utils/
+│   │  |   ├── validateForm.js
 │   ├── App.jsx
 │   ├── index.css
 │   ├── main.jsx
-│   ├── .dockerignore
-│   ├── .gitignore
-│   ├── Dockerfile
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── nginx.conf
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── README.md
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── eslint.config.js
+├── fluxograma.png
+├── index.html
+├── nginx.conf
+├── package-lock.json
+├── package.json
+├──README.md
 └── vite.config.js
 ```
+
+## 📌 Fluxograma da estrutura
+![Arquitetura do Projeto](fluxograma.png)
+
 
 ## 📄 Licença
 
